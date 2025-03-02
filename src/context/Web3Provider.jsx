@@ -9,39 +9,51 @@ export default function Web3Provider({ children }) {
         contractInstance: null,
         selectedAccount: null,
         chainId: null,
-        status: "not connected"
+        status: false
     })
 
-    const [status, setStatus] = useState();
-    const [walletStatus, setWalletStatus] = useState(false);
+    const [error, setError] = useState();
 
     async function handleConnect() {
         const states = await getWeb3state();
-        console.log('states chilos : ', states);
 
         setWeb3state(states.data);
     }
 
     function addWalletListener() {
         if (window.ethereum) {
-            window.ethereum.on("accountsChanged", (accounts) => { // this acts like an event listener for any wallet changes that a user do, with this we can update the ui accordingly.
+            window.ethereum.on("accountsChanged", async (accounts) => { // this acts like an event listener for any wallet changes that a user do, with this we can update the ui accordingly.
                 if (accounts.length > 0) {
-                    setWeb3state((prev) => ({ ...prev, selectedAccount: accounts[0] }))
-                    setStatus("👆🏽 Write a message in the text-field above.")
+                    const currentWallet = await getCurrentWallet();
+                    if (!currentWallet?.error) {
+                        setWeb3state(currentWallet);
+                        return;
+                    }
+
+                    setError(currentWallet?.error);
                 } else {
-                    setWeb3state((prev) => ({ ...prev, selectedAccount: "" }))
-                    setStatus("🦊 Connect to MetaMask using the top right button.")
+                    setWeb3state((prev) => ({ ...prev, status: false }))
+                    setError("Somsething went wrong !");
+                }
+            })
+
+            window.ethereum.on("chainChanged", async (accounts) => { // this acts like an event listener for any wallet changes that a user do, with this we can update the ui accordingly.
+                if (accounts.length > 0) {
+                    const currentWallet = await getCurrentWallet();
+                    if (!currentWallet?.error) {
+                        setWeb3state(currentWallet);
+                        return;
+                    }
+
+                    setError(currentWallet?.error);
+                } else {
+                    setWeb3state((prev) => ({ ...prev, status: false }))
+                    setError("Somsething went wrong !");
                 }
             })
         } else {
-            setStatus(
-                <p>
-                    {" "}
-                    🦊 <a target="_blank" href={`https://metamask.io/download.html`}>
-                        You must install MetaMask, a virtual Ethereum wallet, in your browser.
-                    </a>
-                </p>
-            )
+            setWeb3state((prev) => ({ ...prev, status: false }))
+            setError("please kindly install the damn wallet !");
         }
     }
 
@@ -49,12 +61,9 @@ export default function Web3Provider({ children }) {
         (async () => {
             console.log('page reloading !');
             try {
-                const { address, walletStatus, chainId } = await getCurrentWallet();
-                setStatus(walletStatus);
-                if(address) {
-                    setWeb3state({selectedAccount: address, chainId, walletStatus, contractInstance: 29 });
-                    console.log('status : ', addr);
-
+                const current = await getCurrentWallet();
+                if (!current?.error) {
+                    setWeb3state(current);
                 }
             } catch (err) {
                 console.error(err);
@@ -66,10 +75,14 @@ export default function Web3Provider({ children }) {
         addWalletListener();
     }, []);
 
+    useEffect(() => {
+        console.log('state changed : ', web3state);
+    }, [web3state]);
+
     return (
         <Web3context.Provider value={web3state}>
             {/* header */}
-            {status}
+            {error && error}
             {children}
             <span>
                 <button disabled={web3state.selectedAccount} onClick={handleConnect}>{web3state.selectedAccount ? web3state.selectedAccount : "connect wallet"}</button>
