@@ -1,8 +1,11 @@
 import { useContext } from "react";
+import {
+  RouterProvider
+} from "react-router-dom";
 import "./App.css";
 import { Web3context } from "./context/Web3Provider";
-import RegisterCandidate from "./pages/Candidate/RegisterCandidate";
-import GetCandidateList from "./pages/Candidate/GetCandidateList";
+import { routes } from "./routes/routes.jsx";
+
 function App() {
   const web3state = useContext(Web3context);
 
@@ -10,9 +13,9 @@ function App() {
 
   return (
     <main>
-      <h1>HOLAAA !</h1>
-      <RegisterCandidate />
-      <GetCandidateList />
+      <h1>Navbar</h1>
+      <RouterProvider router={routes} />
+      {/* <RegisterVoter /> */}
     </main>
   );
 }
