@@ -6,8 +6,9 @@ export const useGetVoter = () => {
   const [loading, setLoading] = useState();
   const [error, setError] = useState();
 
+  const { web3state } = useWeb3Context();
   const { contractInstance: contract, selectedAccount: voterAddress } =
-    useWeb3Context();
+    web3state;
 
   useEffect(() => {
     setLoading(true);

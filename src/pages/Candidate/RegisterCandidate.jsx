@@ -8,7 +8,9 @@ const RegisterCandidate = () => {
   const genderRef = useRef(null);
   const partyRef = useRef(null);
 
-  const { contractInstance: contract } = useWeb3Context();
+  const { web3state } = useWeb3Context();
+  const { contractInstance: contract } =
+    web3state;
 
   const handleCandidateRegister = async (e) => {
     try {

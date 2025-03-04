@@ -2,7 +2,9 @@ import React, { useRef } from "react";
 import { useWeb3Context } from "../../hooks/useWeb3Context";
 
 const VotngTimePeriod = () => {
-  const { contractInstance: contract } = useWeb3Context();
+  const { web3state } = useWeb3Context();
+  const { contractInstance: contract } =
+    web3state;
 
   const startTimeRef = useRef(null);
   const endTimeRef = useRef(null);

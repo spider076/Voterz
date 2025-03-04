@@ -4,7 +4,9 @@ import { useWeb3Context } from "../../hooks/useWeb3Context";
 const AnnounceWinner = () => {
   const [winner, setWinner] = useState(null);
 
-  const { contractInstance: contract } = useWeb3Context();
+  const { web3state } = useWeb3Context();
+  const { contractInstance: contract } =
+    web3state;
 
   async function handleaAnnounceWinner() {
     const response = await contract.announceVotingResult();

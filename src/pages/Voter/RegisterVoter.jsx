@@ -7,7 +7,9 @@ const RegisterVoter = () => {
   const ageRef = useRef(null);
   const genderRef = useRef(null);
 
-  const { contractInstance: contract } = useWeb3Context();
+  const { web3state } = useWeb3Context();
+  const { contractInstance: contract } =
+    web3state;
 
   const handleVoterRegister = async (e) => {
     try {

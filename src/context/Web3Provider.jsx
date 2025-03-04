@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { getCurrentWallet, getWeb3state } from "../utils/walletConnection";
+import { ToastContainer, toast } from "react-toastify";
 
 export const Web3context = createContext();
 
@@ -10,14 +11,11 @@ export default function Web3Provider({ children }) {
     chainId: null,
     status: false,
   });
-
-  const [error, setError] = useState();
-
-  async function handleConnect() {
+  async function handleWallet() {
     const states = await getWeb3state();
 
     if (!states.status && states.error) {
-      setError(states.error);
+      toast(states.error);
       return;
     }
 
@@ -35,10 +33,10 @@ export default function Web3Provider({ children }) {
             return;
           }
 
-          setError(currentWallet?.error);
+          toast(currentWallet?.error);
         } else {
           setWeb3state((prev) => ({ ...prev, status: false }));
-          setError("Somsething went wrong !");
+          toast("Wallet Disconnected !");
         }
       });
 
@@ -51,15 +49,15 @@ export default function Web3Provider({ children }) {
             return;
           }
 
-          setError(currentWallet?.error);
+          toast(currentWallet?.error);
         } else {
           setWeb3state((prev) => ({ ...prev, status: false }));
-          setError("Somsething went wrong !");
+          // toast("Wallet Disconnected");
         }
       });
     } else {
       setWeb3state((prev) => ({ ...prev, status: false }));
-      setError("please kindly install the damn wallet !");
+      toast("please kindly install the damn wallet !");
     }
   }
 
@@ -85,17 +83,9 @@ export default function Web3Provider({ children }) {
   }, [web3state]);
 
   return (
-    <Web3context.Provider value={web3state}>
-      {error && error}
+    <Web3context.Provider value={{ web3state, handleWallet }}>
       {children}
-      <span>
-        <button disabled={web3state.selectedAccount} onClick={handleConnect}>
-          {web3state.selectedAccount
-            ? web3state.selectedAccount
-            : "connect wallet"}
-        </button>
-        {/* {web3state.selectedAccount && <button onClick={handleDisconnect}>Disconnect</button>  } */}
-      </span>
+      <ToastContainer />
     </Web3context.Provider>
   );
 }

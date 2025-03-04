@@ -1,17 +1,24 @@
-import { createBrowserRouter } from "react-router-dom";
-import RegisterVoter from "../pages/Voter/RegisterVoter";
-import RegisterCandidate from "../pages/Candidate/RegisterCandidate";
-import GetVoterList from "../pages/Voter/GetVoterList";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import GetCandidateList from "../pages/Candidate/GetCandidateList";
+import RegisterCandidate from "../pages/Candidate/RegisterCandidate";
 import ElectionCommision from "../pages/ElectionCommision/ElectionCommision";
 import CastVote from "../pages/Voter/CastVote";
+import GetVoterList from "../pages/Voter/GetVoterList";
+import RegisterVoter from "../pages/Voter/RegisterVoter";
+import Wallet from "../components/Wallet/Wallet";
 
-export const routes = createBrowserRouter([
-  { path: "/", element: <h1>HOLAAA</h1> },
-  { path: "register-voter", element: <RegisterVoter /> },
-  { path: "register-candidate", element: <RegisterCandidate /> },
-  { path: "voter-list", element: <GetVoterList /> },
-  { path: "candidate-list", element: <GetCandidateList /> },
-  { path: "electioncommision", element: <ElectionCommision /> },
-  { path: "cast-vote", element: <CastVote /> },
-]);
+const AppRouter = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<Wallet />} />
+      <Route path="/register-voter" element={<RegisterVoter />} />
+      <Route path="/register-candidate" element={<RegisterCandidate />} />
+      <Route path="/voter-list" element={<GetVoterList />} />
+      <Route path="/candidate-list" element={<GetCandidateList />} />
+      <Route path="/electioncommision" element={<ElectionCommision />} />
+      <Route path="/cast-vote" element={<CastVote />} />
+    </Routes>
+  );
+};
+
+export default AppRouter;

@@ -5,7 +5,9 @@ import VotingTimePeriod from "../../components/ElectionCommision/VotingTimePerio
 import { useWeb3Context } from "../../hooks/useWeb3Context";
 
 const ElectionCommision = () => {
-  const { selectedAccount } = useWeb3Context();
+  const { web3state } = useWeb3Context();
+  const { selectedAccount } = web3state;
+
   const [user, setUser] = useState(selectedAccount);
 
   useEffect(() => {
