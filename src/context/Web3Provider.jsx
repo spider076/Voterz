@@ -85,7 +85,7 @@ export default function Web3Provider({ children }) {
   return (
     <Web3context.Provider value={{ web3state, handleWallet }}>
       {children}
-      <ToastContainer />
+      <ToastContainer  theme="dark"/>
     </Web3context.Provider>
   );
 }

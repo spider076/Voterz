@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { ethers } from "ethers";
 import { useWeb3Context } from "../../hooks/useWeb3Context";
+import { toast } from "react-toastify";
 
 const RegisterVoter = () => {
   const nameRef = useRef(null);
@@ -8,8 +9,7 @@ const RegisterVoter = () => {
   const genderRef = useRef(null);
 
   const { web3state } = useWeb3Context();
-  const { contractInstance: contract } =
-    web3state;
+  const { contractInstance: contract } = web3state;
 
   const handleVoterRegister = async (e) => {
     try {
@@ -22,7 +22,14 @@ const RegisterVoter = () => {
       console.log({ response });
       console.log("registration succesfull ");
     } catch (err) {
-      console.error(err);
+      if (err && err.revert && err.revert.args && err.revert.args.length > 0) {
+        const reason = err.revert.args[0]; // Get the reason from args[0]
+        console.log("Error ", reason);
+        toast.warning(reason);
+      } else {
+        console.log("Error: ", err.message);
+        toast.error(err.message);
+      }
     }
   };
 
