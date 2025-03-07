@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import abi from "../constants/contractAbi.json";
+import axios from "axios";
 
 const getWeb3state = async () => {
   try {
@@ -25,12 +26,32 @@ const getWeb3state = async () => {
 
     const contractInstance = new ethers.Contract(contractAddress, abi, signer);
 
-    return {
-      selectedAccount: accounts[0],
-      chainId,
-      contractInstance,
-      status: true,
-    };
+    const message =
+      "Welcome to Voterzz. you accept our terms and conditions and that is we can access any of your data without your consent :)";
+
+    const signature = await signer.signMessage(message);
+
+    const response = await axios.get(
+      import.meta.env.VITE_API_BACKEND_URL +
+        `/api/authentication/${accounts[0]}`,
+      { params: { signature } }
+    );
+
+    localStorage.setItem("token", signature);
+
+    if (response.data.status === "success") {
+      return {
+        selectedAccount: accounts[0],
+        chainId,
+        contractInstance,
+        status: true,
+      };
+    } else {
+      return {
+        status: false,
+        error: response.data.message,
+      };
+    }
   } catch (error) {
     console.error("Error : ", error);
     return {
@@ -41,29 +62,30 @@ const getWeb3state = async () => {
 };
 
 const getCurrentWallet = async () => {
+  console.info("HIIII from current wallet");
   if (window.ethereum) {
     try {
       const addressArray = await window.ethereum.request({
         method: "eth_accounts", // this method returns the metamask connected accounts in realtime(altho you have to call it wraped up in the function)
       });
 
-      const chainHex = await window.ethereum.request({
-        method: "eth_chainId",
-      });
-
-      const chainId = parseInt(chainHex, 16);
-
-      // contract initialization
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const contractAddress = import.meta.env.VITE_API_VOTING_CONTRACTADDRESS;
-      const contractInstance = new ethers.Contract(
-        contractAddress,
-        abi,
-        signer
-      );
-
       if (addressArray.length > 0) {
+        const chainHex = await window.ethereum.request({
+          method: "eth_chainId",
+        });
+
+        const chainId = parseInt(chainHex, 16);
+
+        // contract initialization
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contractAddress = import.meta.env.VITE_API_VOTING_CONTRACTADDRESS;
+        const contractInstance = new ethers.Contract(
+          contractAddress,
+          abi,
+          signer
+        );
+
         return {
           selectedAccount: addressArray[0],
           contractInstance,
