@@ -31,29 +31,25 @@ const getWeb3state = async () => {
 
     const signature = await signer.signMessage(message);
 
-    const response = await axios.get(
+    const response = await axios.post(
       import.meta.env.VITE_API_BACKEND_URL +
-        `/api/authentication/${accounts[0]}`,
-      { params: { signature } }
+        `/api/auth/${accounts[0]}?signature=${signature}`
     );
 
-    localStorage.setItem("token", signature);
-
-    if (response.data.status === "success") {
+    if (response.status === 200) {
       return {
+        token: response.data.token,
         selectedAccount: accounts[0],
         chainId,
         contractInstance,
         status: true,
       };
     } else {
-      return {
-        status: false,
-        error: response.data.message,
-      };
+      throw new Error(response.data.message);
     }
   } catch (error) {
     console.error("Error : ", error);
+
     return {
       status: false,
       error: error.message,
@@ -61,9 +57,8 @@ const getWeb3state = async () => {
   }
 };
 
-const getCurrentWallet = async () => {
-  console.info("HIIII from current wallet");
-  if (window.ethereum) {
+const getCurrentWallet = async (walletStatus) => {
+  if (window.ethereum || !walletStatus) {
     try {
       const addressArray = await window.ethereum.request({
         method: "eth_accounts", // this method returns the metamask connected accounts in realtime(altho you have to call it wraped up in the function)

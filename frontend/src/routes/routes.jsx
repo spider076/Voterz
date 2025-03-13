@@ -13,17 +13,17 @@ const AppRouter = () => {
   const { web3state } = useWeb3Context();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      const account = await web3state.selectedAccount;
+  // useEffect(() => {
+  //   (async () => {
+  //     const account = await web3state.selectedAccount;
 
-      if (account) {
-        navigate("/cast-vote");
-      } else {
-        navigate("/working");
-      }
-    })();
-  }, [web3state]);
+  //     if (account) {
+  //       navigate("/cast-vote");
+  //     } else {
+  //       navigate("/working");
+  //     }
+  //   })();
+  // }, [web3state]);
 
   return (
     <Routes>

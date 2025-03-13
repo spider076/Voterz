@@ -11,10 +11,12 @@ export default function Web3Provider({ children }) {
     chainId: null,
     status: false,
   });
+
   async function handleWallet() {
-    const states = await getWeb3state();
+    const states = await getWeb3state(web3state.status);
 
     if (!states.status && states.error) {
+      setWeb3state((prev) => ({ ...prev, status: false }));
       toast(states.error);
       return;
     }
@@ -22,12 +24,16 @@ export default function Web3Provider({ children }) {
     setWeb3state(states);
   }
 
+  const disconnectWallet = () => {
+    setWeb3state((prev) => ({ ...prev, status: false }));
+  };
+
   function addWalletListener() {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", async (accounts) => {
         // this acts like an event listener for any wallet changes that a user do, with this we can update the ui accordingly.
         if (accounts.length > 0) {
-          const currentWallet = await getCurrentWallet();
+          const currentWallet = await getCurrentWallet(web3state.status);
           if (!currentWallet?.error) {
             setWeb3state(currentWallet);
             return;
@@ -43,7 +49,7 @@ export default function Web3Provider({ children }) {
       window.ethereum.on("chainChanged", async (accounts) => {
         // this acts like an event listener for any wallet changes that a user do, with this we can update the ui accordingly.
         if (accounts.length > 0) {
-          const currentWallet = await getCurrentWallet();
+          const currentWallet = await getCurrentWallet(web3state.statu);
           if (!currentWallet?.error) {
             setWeb3state(currentWallet);
             return;
@@ -65,7 +71,7 @@ export default function Web3Provider({ children }) {
     (async () => {
       console.log("page reloading !");
       try {
-        const current = await getCurrentWallet();
+        const current = await getCurrentWallet(web3state.statu);
         if (!current?.error) {
           setWeb3state(current);
         }
@@ -79,13 +85,13 @@ export default function Web3Provider({ children }) {
   }, []);
 
   useEffect(() => {
-    console.log("state changed : ", web3state);
+    console.log("status : ", web3state.status);
   }, [web3state]);
 
   return (
-    <Web3context.Provider value={{ web3state, handleWallet }}>
+    <Web3context.Provider value={{ web3state, handleWallet, disconnectWallet }}>
       {children}
-      <ToastContainer  theme="dark"/>
+      <ToastContainer theme="dark" />
     </Web3context.Provider>
   );
 }

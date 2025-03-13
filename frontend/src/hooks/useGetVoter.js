@@ -10,23 +10,23 @@ export const useGetVoter = () => {
   const { contractInstance: contract, selectedAccount: voterAddress } =
     web3state;
 
-  useEffect(() => {
-    setLoading(true);
-    (async () => {
-      try {
-        if (contract) {
-          const response = await contract.getVoter(voterAddress);
-          setVoter(response);
-          console.log("response : ", response);
-        }
-      } catch (err) {
-        console.error(err);
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   (async () => {
+  //     try {
+  //       if (contract) {
+  //         const response = await contract.getVoter(voterAddress);
+  //         setVoter(response);
+  //         console.log("response : ", response);
+  //       }
+  //     } catch (err) {
+  //       console.error(err);
+  //       setError(err);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, []);
 
   return { voter, loading, error };
 };
