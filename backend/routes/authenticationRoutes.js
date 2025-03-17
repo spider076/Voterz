@@ -24,7 +24,9 @@ authenticationRoutes.post("/auth/:accountAddress", async (req, res) => {
 
     if (recoverAddress.toLowerCase() == accountAddress.toLowerCase()) {
       const token = jwt.sign({ accountAddress }, "secret");
-      res.status(200).json({ message: "Authentication successful", token });
+      return res
+        .status(200)
+        .json({ message: "Authentication successful", token: token });
     } else {
       throw new Error("recored address not same as account address");
     }

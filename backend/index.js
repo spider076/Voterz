@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors-express");
+const cookieParser = require("cookie-parser");
+const { authenticateJwt } = require("../backend/utils/jwtVerify.js");
 
 const app = express();
 require("dotenv").config();
@@ -11,13 +13,25 @@ const authenticationRoutes = require("./routes/authenticationRoutes.js");
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 
 app.use("/api", authenticationRoutes);
 // app.use("/api/authentication", authenticationRoutes);
 
 connectDb().then(() => {
   console.log("connected to db");
+});
+
+app.get("/check", authenticateJwt, (req, res) => {
+  console.log("CHECKKK ENDPOINT !!!");
+  console.log("req.user", req.user);
+  return res.json({ message: "Authentication successful", user: req.user });
 });
 
 app.get("/", (req, res) => {

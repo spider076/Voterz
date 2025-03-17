@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors-express": "^0.2.2",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",

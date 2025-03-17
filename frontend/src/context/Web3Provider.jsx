@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-import { getCurrentWallet, getWeb3state } from "../utils/walletConnection";
 import { ToastContainer, toast } from "react-toastify";
+import { getCurrentWallet, getWeb3state } from "../utils/walletConnection";
 
 export const Web3context = createContext();
 
@@ -11,6 +11,14 @@ export default function Web3Provider({ children }) {
     chainId: null,
     status: false,
   });
+
+  const TOKEN = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (TOKEN != null && TOKEN != undefined) {
+      setWeb3state((prev) => ({ ...prev, token: TOKEN, status: true }));
+    }
+  }, []);
 
   async function handleWallet() {
     const states = await getWeb3state(web3state.status);

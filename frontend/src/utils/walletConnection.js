@@ -33,10 +33,15 @@ const getWeb3state = async () => {
 
     const response = await axios.post(
       import.meta.env.VITE_API_BACKEND_URL +
-        `/api/auth/${accounts[0]}?signature=${signature}`
+        `/api/auth/${accounts[0]}?signature=${signature}`,
+      {
+        withCredentials: true,
+      }
     );
 
     if (response.status === 200) {
+      localStorage.setItem("token", response.data.token);
+
       return {
         token: response.data.token,
         selectedAccount: accounts[0],
