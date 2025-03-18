@@ -9,6 +9,8 @@ require("dotenv").config();
 const { connectDb } = require("./db/connect.js");
 // const candidateRoutes = require("./routes/candidateRoutes.js");
 const authenticationRoutes = require("./routes/authenticationRoutes.js");
+const { candidateRoutes } = require("./routes/candidateRoutes.js");
+const { voterRoutes } = require("./routes/voterRoutes.js");
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,7 +24,8 @@ app.use(
 app.use(cookieParser());
 
 app.use("/api", authenticationRoutes);
-// app.use("/api/authentication", authenticationRoutes);
+app.use("/api/candidate", authenticateJwt, candidateRoutes);
+app.use("/api/voter", authenticateJwt, voterRoutes);
 
 connectDb().then(() => {
   console.log("connected to db");
